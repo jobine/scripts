@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if (($#==0)); then
+  echo no argument specified!;
+  exit
+fi
+
+ldir=`cd -P $(dirname $0); pwd`
+
+fname=`basename $1`
+
+pdir=`cd -P $(dirname $1); pwd`
+
+user=`whoami`
+
+whitelist=`cat $ldir/whitelist`
+blacklist=`cat $ldir/blacklist`
+
+for host in $whitelist; do
+  echo [syncing...] "$fname" to "$host"
+  ssh $host "mkdir -p $pdir"
+  rsync -arv $pdir/$fname $user@$host:$pdir
+done
